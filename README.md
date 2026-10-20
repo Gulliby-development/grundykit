@@ -24,7 +24,7 @@ usage: grundykit grundy [--max N] RULE
        grundykit sum PART...
        grundykit win PART...
        grundykit play PART...
-       grundykit period [--max N] RULE
+       grundykit period [--max N] [--cycles N] RULE
        grundykit misere HEAP...
        grundykit wythoff A B
        grundykit pairs [--max N]
@@ -68,7 +68,7 @@ period      12
 cycle       7 4 1 2 8 1 4 7 2 1 8 2
 ```
 
-The optional `--max` defaults to 20 for `grundy` (range 0–2000), 300 for `period` (range 1–5000), and 20 for `pairs` (range 0–20000).
+The optional `--max` defaults to 20 for `grundy` (range 0–2000), 300 for `period` (range 1–5000), and 20 for `pairs` (range 0–20000). The optional `--cycles` of `period` defaults to 3 (range 2–10).
 
 ## Rules
 
@@ -86,7 +86,7 @@ A rule is `nim`, `sub:T1,T2,...`, or `oct:D1D2...`. Nim allows taking any positi
 
 `play PART...` plays a normal-play position to completion: the next player takes a winning move when one exists, otherwise the first legal move. The total size of all parts must not exceed 40.
 
-`period [--max N] RULE` searches the computed Grundy sequence for a repeating suffix with at least three full cycles. Any reported period is a pattern detected in the finite sequence through the chosen maximum; it is not a proof about an uncomputed infinite sequence.
+`period [--max N] [--cycles N] RULE` searches the computed Grundy sequence for a repeating suffix with at least N full cycles (`--cycles`, default 3). For example `period sub:2,3 --max 9` finds no period, while adding `--cycles 2` reports the period 5. Any reported period is a pattern detected in the finite sequence through the chosen maximum; it is not a proof about an uncomputed infinite sequence.
 
 `misere HEAP...` solves misere Nim, where taking the last token loses, for one to eight heaps of size 0 through 1000. It reports the winner and, when one exists, the first winning move in heap order.
 

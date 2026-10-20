@@ -59,7 +59,7 @@ fn assert_error(code: i32, io: &FakeIo, message: &str) {
 fn usage_is_the_exact_ten_line_contract_without_a_final_newline() {
     assert_eq!(
         USAGE,
-        "usage: grundykit grundy [--max N] RULE\n       grundykit moves PART\n       grundykit sum PART...\n       grundykit win PART...\n       grundykit play PART...\n       grundykit period [--max N] RULE\n       grundykit misere HEAP...\n       grundykit wythoff A B\n       grundykit pairs [--max N]\n       grundykit nimber A B"
+        "usage: grundykit grundy [--max N] RULE\n       grundykit moves PART\n       grundykit sum PART...\n       grundykit win PART...\n       grundykit play PART...\n       grundykit period [--max N] [--cycles N] RULE\n       grundykit misere HEAP...\n       grundykit wythoff A B\n       grundykit pairs [--max N]\n       grundykit nimber A B"
     );
     assert!(!USAGE.ends_with('\n'));
 }
