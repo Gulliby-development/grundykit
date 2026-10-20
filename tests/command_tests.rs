@@ -1073,3 +1073,101 @@ fn nimber_rejects_invalid_operands_and_argument_counts() {
     let extra = cmd_nimber::run(&args!["7", "9", "11"], &extra_io);
     assert_error(extra, "too many arguments", &extra_io, 0);
 }
+
+#[test]
+fn period_cycles_option_changes_how_many_cycles_are_required() {
+    let five =
+        "rule        sub:2,3\nmax         9\npreperiod   0\nperiod      5\ncycle       0 0 1 1 2\n";
+
+    let default_io = FakeIo::default();
+    let default = cmd_period::run(&args!["sub:2,3", "--max", "9"], &default_io);
+    assert_success(
+        default,
+        1,
+        &default_io,
+        "rule        sub:2,3\nmax         9\nperiod      none\n",
+    );
+
+    let two_io = FakeIo::default();
+    let two = cmd_period::run(&args!["sub:2,3", "--max", "9", "--cycles", "2"], &two_io);
+    assert_success(two, 0, &two_io, five);
+
+    let equals_io = FakeIo::default();
+    let equals = cmd_period::run(&args!["--cycles=2", "sub:2,3", "--max=9"], &equals_io);
+    assert_success(equals, 0, &equals_io, five);
+
+    let last_io = FakeIo::default();
+    let last = cmd_period::run(
+        &args!["sub:2,3", "--max", "9", "--cycles", "5", "--cycles", "2"],
+        &last_io,
+    );
+    assert_success(last, 0, &last_io, five);
+
+    let long_pre_io = FakeIo::default();
+    let long_pre = cmd_period::run(
+        &args!["sub:2,3", "--max", "13", "--cycles", "2"],
+        &long_pre_io,
+    );
+    assert_success(
+        long_pre,
+        0,
+        &long_pre_io,
+        "rule        sub:2,3\nmax         13\npreperiod   12\nperiod      1\ncycle       1\n",
+    );
+
+    let ten_io = FakeIo::default();
+    let ten = cmd_period::run(&args!["oct:77", "--max", "200", "--cycles", "10"], &ten_io);
+    assert_success(
+        ten,
+        0,
+        &ten_io,
+        "rule        oct:77\nmax         200\npreperiod   71\nperiod      12\ncycle       7 4 1 2 8 1 4 7 2 1 8 2\n",
+    );
+}
+
+#[test]
+fn period_cycles_option_is_range_checked() {
+    let low_io = FakeIo::default();
+    let low = cmd_period::run(&args!["nim", "--cycles", "1"], &low_io);
+    assert_error(
+        low,
+        "invalid --cycles \"1\" (expected an integer from 2 to 10)",
+        &low_io,
+        0,
+    );
+
+    let high_io = FakeIo::default();
+    let high = cmd_period::run(&args!["nim", "--cycles=11"], &high_io);
+    assert_error(
+        high,
+        "invalid --cycles \"11\" (expected an integer from 2 to 10)",
+        &high_io,
+        0,
+    );
+
+    let separate_io = FakeIo::default();
+    let separate = cmd_period::run(&args!["sub:2,3", "--cycles", "11"], &separate_io);
+    assert_error(
+        separate,
+        "invalid --cycles \"11\" (expected an integer from 2 to 10)",
+        &separate_io,
+        0,
+    );
+
+    let zero_io = FakeIo::default();
+    let zero = cmd_period::run(&args!["nim", "--cycles=03"], &zero_io);
+    assert_error(
+        zero,
+        "invalid --cycles \"03\" (expected an integer from 2 to 10)",
+        &zero_io,
+        0,
+    );
+
+    let missing_io = FakeIo::default();
+    let missing = cmd_period::run(&args!["nim", "--cycles"], &missing_io);
+    assert_error(missing, "--cycles needs a value", &missing_io, 0);
+
+    let other_io = FakeIo::default();
+    let other = cmd_grundy::run(&args!["sub:2,3", "--cycles", "2"], &other_io);
+    assert_error(other, "unknown option \"--cycles\"", &other_io, 0);
+}

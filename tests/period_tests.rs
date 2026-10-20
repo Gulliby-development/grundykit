@@ -1,4 +1,4 @@
-use grundykit::period::{Period, detect};
+use grundykit::period::{Period, detect, detect_with};
 
 #[test]
 fn empty_sequence_has_no_period() {
@@ -74,6 +74,29 @@ fn extreme_u64_values_are_compared_without_numeric_restrictions() {
 #[test]
 fn extreme_u64_values_do_not_match_unless_they_are_equal() {
     assert_eq!(detect(&[u64::MAX, 0, u64::MAX, 1, u64::MAX, 0]), None);
+}
+
+#[test]
+fn two_cycles_are_enough_when_requested() {
+    assert_eq!(
+        detect_with(&[0, 1, 0, 1], 2),
+        Some(Period { pre: 0, period: 2 })
+    );
+    assert_eq!(detect_with(&[0, 1, 0, 1], 3), None);
+}
+
+#[test]
+fn more_cycles_can_reject_a_shorter_period() {
+    let values = [0, 0, 1, 1, 2, 0, 0, 1, 1, 2];
+    assert_eq!(detect_with(&values, 2), Some(Period { pre: 0, period: 5 }));
+    assert_eq!(detect_with(&values, 3), None);
+}
+
+#[test]
+fn three_cycles_stay_the_default() {
+    let values = [9, 0, 1, 0, 1, 0, 1];
+    assert_eq!(detect(&values), detect_with(&values, 3));
+    assert_eq!(detect(&values), Some(Period { pre: 1, period: 2 }));
 }
 
 #[test]
