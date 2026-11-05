@@ -27,7 +27,7 @@ usage: grundykit grundy [--max N] RULE
        grundykit period [--max N] [--cycles N] RULE
        grundykit misere HEAP...
        grundykit wythoff A B
-       grundykit pairs [--max N]
+       grundykit pairs [--min N] [--max N]
        grundykit nimber A B
 ```
 
@@ -70,6 +70,8 @@ cycle       7 4 1 2 8 1 4 7 2 1 8 2
 
 The optional `--max` defaults to 20 for `grundy` (range 0–2000), 300 for `period` (range 1–5000), and 20 for `pairs` (range 0–20000). The optional `--cycles` of `period` defaults to 3 (range 2–10).
 
+The optional `--min` of `pairs` defaults to 0 (range 0-20000).
+
 ## Rules
 
 A rule is `nim`, `sub:T1,T2,...`, or `oct:D1D2...`. Nim allows taking any positive number of tokens up to the heap size. A subtraction rule has one to eight comma-separated takes, each from 1 to 1000. Takes are decimal integers without leading zeroes; the canonical form sorts them in ascending order and removes duplicates, so `sub:4,1,3,3` canonicalizes to `sub:1,3,4`, while `sub:01` is invalid. An octal rule has one to twelve digits from 0 through 7, with a nonzero final digit, so `oct:70` is invalid. For each number of tokens removed, the digit's 1 bit allows leaving no heap, its 2 bit allows leaving one heap, and its 4 bit allows splitting the remainder into two non-empty heaps; for example, `oct:77` is Kayles. A part uses `RULE/SIZE`, such as `oct:77/9`, and its size is from 0 through 2000.
@@ -92,7 +94,7 @@ A rule is `nim`, `sub:T1,T2,...`, or `oct:D1D2...`. Nim allows taking any positi
 
 `wythoff A B` solves Wythoff's game for two piles, each from 0 through 20000, and reports a winning move when the position is not cold.
 
-`pairs [--max N]` lists the cold pairs of Wythoff's game whose smaller pile is at most the selected maximum.
+`pairs [--min N] [--max N]` lists the cold pairs of Wythoff's game whose smaller pile is at least the selected minimum and at most the selected maximum. When `--min` is above 0, the output starts with a `min` line. A minimum above the maximum is an input error.
 
 `nimber A B` reports the nim-sum, nim product and multiplicative inverse (when nonzero) for operands from 0 through 4294967295.
 
@@ -149,6 +151,7 @@ All program output lines end with LF on Windows, macOS and Linux.
 - `tests/play_tests.rs` - Tests deterministic game transcripts.
 - `tests/misere_tests.rs` - Tests misere Nim outcomes and moves.
 - `tests/wythoff_tests.rs` - Tests cold pairs and winning moves.
+- `tests/pairs_min_tests.rs` - Tests the `--min` option of the `pairs` command.
 - `tests/command_tests.rs` - Tests the ten command adapters.
 - `tests/cli_tests.rs` - Tests command-line dispatch and process behavior.
 - `tests/docs_tests.rs` - Tests the README usage, examples and file inventory.
