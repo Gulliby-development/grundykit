@@ -10,7 +10,7 @@ pub const USAGE: &str = "usage: grundykit grundy [--max N] RULE
        grundykit period [--max N] [--cycles N] RULE
        grundykit misere HEAP...
        grundykit wythoff A B
-       grundykit pairs [--max N]
+       grundykit pairs [--min N] [--max N]
        grundykit nimber A B";
 
 pub fn run(args: &[String], io: &dyn Io) -> i32 {

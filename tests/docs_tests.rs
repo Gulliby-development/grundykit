@@ -107,7 +107,7 @@ fn direct_rust_files(root: &Path, directory: &str) -> Vec<String> {
     paths
 }
 
-const USAGE: &str = "usage: grundykit grundy [--max N] RULE\n       grundykit moves PART\n       grundykit sum PART...\n       grundykit win PART...\n       grundykit play PART...\n       grundykit period [--max N] [--cycles N] RULE\n       grundykit misere HEAP...\n       grundykit wythoff A B\n       grundykit pairs [--max N]\n       grundykit nimber A B";
+const USAGE: &str = "usage: grundykit grundy [--max N] RULE\n       grundykit moves PART\n       grundykit sum PART...\n       grundykit win PART...\n       grundykit play PART...\n       grundykit period [--max N] [--cycles N] RULE\n       grundykit misere HEAP...\n       grundykit wythoff A B\n       grundykit pairs [--min N] [--max N]\n       grundykit nimber A B";
 
 const MOVES_OUTPUT: &str = "part        oct:77/5\nvalue       4\nmoves       5\nmove        take 1  leaves 4  value 1\nmove        take 1  leaves 1+3  value 2\nmove        take 1  leaves 2+2  value 0\nmove        take 2  leaves 3  value 3\nmove        take 2  leaves 1+2  value 3\n";
 
@@ -196,7 +196,7 @@ fn readme_has_the_required_sections_commands_limits_and_behavior() {
         "`period [--max N] [--cycles N] RULE`",
         "`misere HEAP...`",
         "`wythoff A B`",
-        "`pairs [--max N]`",
+        "`pairs [--min N] [--max N]`",
         "`nimber A B`",
     ] {
         assert!(README.contains(command), "missing command {command}");
@@ -236,6 +236,7 @@ fn readme_has_the_required_sections_commands_limits_and_behavior() {
         "cargo fmt --check",
         "cargo clippy -- -D warnings",
         "cargo test",
+        "The optional `--min` of `pairs` defaults to 0 (range 0-20000)",
     ] {
         assert!(
             README.contains(detail),
@@ -289,6 +290,7 @@ fn readme_layout_is_the_ordered_complete_file_inventory() {
         "tests/play_tests.rs",
         "tests/misere_tests.rs",
         "tests/wythoff_tests.rs",
+        "tests/pairs_min_tests.rs",
         "tests/command_tests.rs",
         "tests/cli_tests.rs",
         "tests/docs_tests.rs",
@@ -304,8 +306,8 @@ fn readme_layout_is_the_ordered_complete_file_inventory() {
         .chain(test_paths.iter())
         .cloned()
         .collect::<Vec<_>>();
-    assert_eq!(all_paths.len(), 39);
-    assert_eq!(all_paths.iter().collect::<BTreeSet<_>>().len(), 39);
+    assert_eq!(all_paths.len(), 40);
+    assert_eq!(all_paths.iter().collect::<BTreeSet<_>>().len(), 40);
 
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     for path in &all_paths {
